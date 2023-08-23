@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cardData } from "./CardData";
 import DashboardCard from "./DashboardCard";
 import { styled } from "styled-components";
@@ -27,6 +27,10 @@ const Dashboard: React.FC<DashBoardProps> = ({ currentDisplay }) => {
   // Get the current date and time
   const currentDate = new Date();
   const formattedDateTime = formatDate(currentDate);
+
+  useEffect(() => {
+    setInvoiceCount({ total: 0, pending: 0, cleared: 0, disputed: 0 });
+  }, []);
 
   return (
     <>

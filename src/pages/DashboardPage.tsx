@@ -1,10 +1,9 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import DashboardNav from "../components/DashBoardNav/DashboardNav";
 import Header from "../components/Header/Header";
 import { styled } from "styled-components";
 import { useLocation } from "react-router-dom";
 import Dashboard from "../components/Dashboard/Dashboard";
-import React from "react";
 
 interface NavProps {
   currentDisplay: string;
