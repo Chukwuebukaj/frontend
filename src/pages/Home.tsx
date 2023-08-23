@@ -4,6 +4,7 @@ import NavBar from "../components/Navbar/NavBar";
 import { useAccount } from "wagmi";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
 import { UserProps } from "../components/Hero/Hero";
+import { toast } from "react-toastify";
 
 const Home = () => {
   const { address } = useAccount();
@@ -33,6 +34,7 @@ const Home = () => {
       const data = await response.json();
       console.log(data);
       if (response.ok) {
+        toast.success(data.message);
         setBtnText("Go to Dashboard");
         setHref("/profile");
         localStorage.setItem("status", JSON.stringify("loggedin"));

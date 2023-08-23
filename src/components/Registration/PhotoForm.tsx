@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
 import { InputField } from "../Reuseables/FormFields";
 import Button from "../Reuseables/Button";
+import { Link, useLocation } from "react-router-dom";
 
 interface PhotoFormProps {
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -23,6 +24,9 @@ const PhotoForm: React.FC<PhotoFormProps> = ({
   businessLogo,
   profileImage,
 }) => {
+  const location = useLocation();
+  console.log(location);
+
   return (
     <>
       {prevClicked && (
@@ -70,7 +74,9 @@ const PhotoForm: React.FC<PhotoFormProps> = ({
           </FormFieldsWrapper>
           <BtnsWrapper>
             <Button children="Prev" onClick={handleClickPrev} />
-            <Button children="Continue" type="submit" />
+            <Link to={"/profile"} state={location.state}>
+              <Button children="Continue" type="submit" />
+            </Link>
           </BtnsWrapper>
         </PhotoFormWrapper>
       )}

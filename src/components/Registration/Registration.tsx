@@ -4,6 +4,7 @@ import { useState } from "react";
 import PhotoForm from "./PhotoForm";
 import { useAccount } from "wagmi";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
 
 interface RegistrationProps {
@@ -76,9 +77,11 @@ const Registration = () => {
       console.log(response);
       if (response.ok) {
         navigate("/profile");
-      }
-    } catch (error) {
+        toast.success(data.message);
+      } else toast.error(response.statusText);
+    } catch (error: any) {
       console.error(error);
+      toast.error(error.statusText);
     }
   };
 
