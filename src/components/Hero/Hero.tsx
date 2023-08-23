@@ -121,7 +121,7 @@ const HeadingWrapper = styled.div`
 
 const GetStartedBtn = styled(Button)`
   height: 2.6875rem;
-  width: 7.6875rem;
+  padding: 0 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
