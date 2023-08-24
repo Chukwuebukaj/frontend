@@ -4,19 +4,26 @@ import { useLocation } from "react-router-dom";
 
 interface HeaderProps {
   currentDisplay: string;
+  handleClickCreateInvoice: () => void;
 }
 
 interface AvatarProp {
   $bgImg: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentDisplay }) => {
+const Header: React.FC<HeaderProps> = ({
+  currentDisplay,
+  handleClickCreateInvoice,
+}) => {
   const location = useLocation();
 
   return (
     <HeaderWrapper>
       {currentDisplay === "Invoice" && (
-        <CreateInvoiceBtn children="Create Invoice" />
+        <CreateInvoiceBtn
+          children="Create Invoice"
+          onClick={handleClickCreateInvoice}
+        />
       )}
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -42,22 +49,24 @@ const Header: React.FC<HeaderProps> = ({ currentDisplay }) => {
           fill="#262626"
         />
       </svg>
-      <span>{location.state.fullName}</span>
-      <AvatarWrapper $bgImg={location.state.profilePic}>
-        {!location.state.profilePic && "me"}
-      </AvatarWrapper>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="21"
-        viewBox="0 0 20 21"
-        fill="none"
-      >
-        <path
-          d="M16.6922 8.44219L10.4422 14.6922C10.3841 14.7503 10.3152 14.7964 10.2393 14.8279C10.1635 14.8593 10.0821 14.8755 10 14.8755C9.91787 14.8755 9.83654 14.8593 9.76067 14.8279C9.68479 14.7964 9.61586 14.7503 9.55782 14.6922L3.30782 8.44219C3.22031 8.35478 3.1607 8.24337 3.13655 8.12207C3.11239 8.00076 3.12477 7.87502 3.17211 7.76076C3.21946 7.64649 3.29964 7.54884 3.40252 7.48017C3.50539 7.41151 3.62632 7.3749 3.75 7.375H16.25C16.3737 7.3749 16.4946 7.41151 16.5975 7.48017C16.7004 7.54884 16.7805 7.64649 16.8279 7.76076C16.8752 7.87502 16.8876 8.00076 16.8635 8.12207C16.8393 8.24337 16.7797 8.35478 16.6922 8.44219Z"
-          fill="#262626"
-        />
-      </svg>
+      <div className="avatar-name">
+        <span>{location.state.fullName}</span>
+        <AvatarWrapper $bgImg={location.state.profilePic}>
+          {!location.state.profilePic && "me"}
+        </AvatarWrapper>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="21"
+          viewBox="0 0 20 21"
+          fill="none"
+        >
+          <path
+            d="M16.6922 8.44219L10.4422 14.6922C10.3841 14.7503 10.3152 14.7964 10.2393 14.8279C10.1635 14.8593 10.0821 14.8755 10 14.8755C9.91787 14.8755 9.83654 14.8593 9.76067 14.8279C9.68479 14.7964 9.61586 14.7503 9.55782 14.6922L3.30782 8.44219C3.22031 8.35478 3.1607 8.24337 3.13655 8.12207C3.11239 8.00076 3.12477 7.87502 3.17211 7.76076C3.21946 7.64649 3.29964 7.54884 3.40252 7.48017C3.50539 7.41151 3.62632 7.3749 3.75 7.375H16.25C16.3737 7.3749 16.4946 7.41151 16.5975 7.48017C16.7004 7.54884 16.7805 7.64649 16.8279 7.76076C16.8752 7.87502 16.8876 8.00076 16.8635 8.12207C16.8393 8.24337 16.7797 8.35478 16.6922 8.44219Z"
+            fill="#262626"
+          />
+        </svg>
+      </div>
     </HeaderWrapper>
   );
 };
@@ -72,6 +81,12 @@ const HeaderWrapper = styled.header`
   justify-content: flex-end;
   gap: 2rem;
   align-items: center;
+
+  .avatar-name {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
 `;
 const CreateInvoiceBtn = styled(Button)`
   color: var(--white-100, #fff);

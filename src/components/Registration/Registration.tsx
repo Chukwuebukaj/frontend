@@ -76,8 +76,18 @@ const Registration = () => {
       console.log(data);
       console.log(response);
       if (response.ok) {
-        navigate("/profile");
         toast.success(data.message);
+        document.cookie = `pavoce=${data.token}`;
+        setTimeout(() => {
+          navigate("/profile", {
+            state: {
+              businessName: data.user.businessName,
+              profilePic: data.user.profilePic,
+              businessLogo: data.user.businessLogo,
+              fullName: data.user.fullName,
+            },
+          });
+        }, 3000);
       } else toast.error(response.statusText);
     } catch (error: any) {
       console.error(error);
