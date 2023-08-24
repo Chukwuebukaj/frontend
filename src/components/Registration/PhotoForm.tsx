@@ -25,7 +25,6 @@ const PhotoForm: React.FC<PhotoFormProps> = ({
   profileImage,
 }) => {
   const location = useLocation();
-  console.log(location);
 
   return (
     <>
@@ -106,6 +105,7 @@ const PhotoFormWrapper = styled.div`
     border-radius: 0.5rem;
     margin: 0 auto;
     border: 1px solid lightgray;
+    cursor: pointer;
   }
 `;
 const ProfileImageWrapper = styled.div`

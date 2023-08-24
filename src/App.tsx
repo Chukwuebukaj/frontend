@@ -10,7 +10,7 @@ import { Web3Modal } from "@web3modal/react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { arbitrum, mainnet, polygon } from "wagmi/chains";
 import RegistrationPage from "./pages/RegistrationPage";
-import DashboardPage from "./pages/DashboardPage";
+import ProfilePage from "./pages/ProfilePage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const projectId = import.meta.env.VITE_PROJECT_ID;
@@ -34,7 +34,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<RegistrationPage />} />
-          <Route path="/profile" element={<DashboardPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />

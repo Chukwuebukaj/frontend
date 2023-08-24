@@ -25,8 +25,6 @@ const Home = () => {
     body: JSON.stringify({ walletId: String(address) }),
   };
 
-  console.log(requestOptions);
-
   const loginUser = async () => {
     try {
       const response = await fetch(`${baseUrl}/user/login`, requestOptions);

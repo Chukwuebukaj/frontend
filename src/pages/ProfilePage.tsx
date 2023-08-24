@@ -2,8 +2,8 @@ import { useState } from "react";
 import DashboardNav from "../components/DashBoardNav/DashboardNav";
 import Header from "../components/Header/Header";
 import { styled } from "styled-components";
-import { useLocation } from "react-router-dom";
 import Dashboard from "../components/Dashboard/Dashboard";
+import InvoiceDisplay from "../components/Invoice/InvoiceDisplay";
 
 interface NavProps {
   currentDisplay: string;
@@ -11,15 +11,14 @@ interface NavProps {
   bgColor: string;
 }
 
-const DashboardPage = () => {
-  const location = useLocation();
-  console.log(location);
-
+const ProfilePage = () => {
   const [props, setProps] = useState<NavProps>({
     currentDisplay: "Dashboard",
     color: "#3A62F2",
     bgColor: "#F4F6FE",
   });
+  const [createInvoiceClicked, setCreateInvoiceClicked] =
+    useState<boolean>(false);
 
   const handleSetCurrentDisplay = (current: string) => {
     const newProps = {
@@ -28,6 +27,11 @@ const DashboardPage = () => {
       bgColor: "#F4F6FE",
     };
     setProps(newProps);
+  };
+
+  const createInvoiceFromDashboard = () => {
+    handleSetCurrentDisplay("Invoice");
+    setCreateInvoiceClicked(true);
   };
 
   return (
@@ -39,14 +43,25 @@ const DashboardPage = () => {
         bgColor={props.bgColor}
       />
       <DashboardRight>
-        <Header currentDisplay={props.currentDisplay} />
-        <Dashboard currentDisplay={props.currentDisplay} />
+        <Header
+          currentDisplay={props.currentDisplay}
+          handleClickCreateInvoice={() => setCreateInvoiceClicked(true)}
+        />
+        <Dashboard
+          currentDisplay={props.currentDisplay}
+          handleClickCreateInvoice={createInvoiceFromDashboard}
+        />
+        <InvoiceDisplay
+          currentDisplay={props.currentDisplay}
+          clickCreateInvoice={createInvoiceClicked}
+          handleClickCreateInvoice={() => setCreateInvoiceClicked(true)}
+        />
       </DashboardRight>
     </ProfileWrapper>
   );
 };
 
-export default DashboardPage;
+export default ProfilePage;
 
 const ProfileWrapper = styled.div`
   display: flex;

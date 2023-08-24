@@ -4,3 +4,15 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+input[type="checkbox"],
+button,
+select,
+a {
+  cursor: pointer;
+}
+
+select:focus,
+input:focus {
+  outline: none;
+}

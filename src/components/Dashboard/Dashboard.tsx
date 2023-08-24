@@ -15,9 +15,13 @@ interface CountProps {
 
 interface DashBoardProps {
   currentDisplay: string;
+  handleClickCreateInvoice: () => void;
 }
 
-const Dashboard: React.FC<DashBoardProps> = ({ currentDisplay }) => {
+const Dashboard: React.FC<DashBoardProps> = ({
+  currentDisplay,
+  handleClickCreateInvoice,
+}) => {
   const [invoiceCount, setInvoiceCount] = useState<CountProps>({
     total: 0,
     pending: 0,
@@ -95,7 +99,10 @@ const Dashboard: React.FC<DashBoardProps> = ({ currentDisplay }) => {
               <span className="get-paid">
                 Send invoice to your clients and get paid
               </span>
-              <CreateInvoiceBtn children="Create Invoice" />
+              <CreateInvoiceBtn
+                children="Create Invoice"
+                onClick={handleClickCreateInvoice}
+              />
             </div>
           </DashboardBottom>
         </DashboardWrapper>
@@ -216,7 +223,7 @@ const DashboardBottom = styled.div`
   }
 `;
 
-const CreateInvoiceBtn = styled(Button)`
+export const CreateInvoiceBtn = styled(Button)`
   color: var(--blue-500, #3a62f2);
   text-align: center;
   font-size: 1rem;
