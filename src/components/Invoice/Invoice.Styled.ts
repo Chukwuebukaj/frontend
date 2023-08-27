@@ -81,7 +81,7 @@ export const MeterBottom = styled.div`
   display: flex;
   width: 51.0625rem;
   height: 13.5rem;
-  padding: 0.75rem;
+  // padding: 0.75rem;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;

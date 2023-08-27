@@ -34,6 +34,12 @@ const ProfilePage = () => {
     setCreateInvoiceClicked(true);
   };
 
+  const handleClickListItem = (item: string) => {
+    if (item === "Create Invoice") {
+      setCreateInvoiceClicked(false);
+    }
+  };
+
   return (
     <ProfileWrapper>
       <DashboardNav
@@ -55,6 +61,7 @@ const ProfilePage = () => {
           currentDisplay={props.currentDisplay}
           clickCreateInvoice={createInvoiceClicked}
           handleClickCreateInvoice={() => setCreateInvoiceClicked(true)}
+          handleClickListItem={(selected) => handleClickListItem(selected)}
         />
       </DashboardRight>
     </ProfileWrapper>

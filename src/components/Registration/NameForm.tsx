@@ -7,7 +7,7 @@ interface NameFormProps {
   nextClicked: boolean;
   isChecked: boolean;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  formValues: { name: string; businessname: string };
+  formValues: { name: string; businessname: string; email: string };
 }
 
 const NameForm: React.FC<NameFormProps> = ({
@@ -17,6 +17,9 @@ const NameForm: React.FC<NameFormProps> = ({
   handleClickNext,
   handleInputChange,
 }) => {
+  const validated: boolean =
+    (isChecked && formValues.name !== "" && formValues.email !== "") ||
+    (!isChecked && !Object.values(formValues).includes(""));
   return (
     <>
       {!nextClicked && (
@@ -52,9 +55,24 @@ const NameForm: React.FC<NameFormProps> = ({
                 />
               </div>
             )}
+            <div className="input-container">
+              <label htmlFor="">Enter email</label>
+              <FormField
+                name="email"
+                placeholder="Enter your email address"
+                onChange={handleInputChange}
+                value={formValues.email}
+              />
+            </div>
           </FormFieldsWrapper>
 
-          <NextBtn onClick={handleClickNext}>Next</NextBtn>
+          <NextBtn
+            $bgColor={validated ? "#3A62F2" : "#D3D3D3"}
+            disabled={!validated}
+            onClick={handleClickNext}
+          >
+            Next
+          </NextBtn>
         </FormWrapper>
       )}
     </>
@@ -116,16 +134,16 @@ const CheckBox = styled(InputField)`
   flex-shrink: 0;
 `;
 
-const NextBtn = styled(Button)`
+const NextBtn = styled(Button)<{ $bgColor: string }>`
   padding: 0.75rem 1rem;
   width: fit-content;
   border-radius: 0.5rem;
-  background: var(--blue-500, #3a62f2);
+  background: ${({ $bgColor }) => $bgColor};
   color: var(--white-100, #fff);
   text-align: center;
   font-size: 1rem;
   font-weight: 700;
   line-height: normal;
-  border: 1px solid #3a62f2;
+  border: 1px solid ${({ $bgColor }) => $bgColor};
   margin: 3.25rem 0 0 auto;
 `;

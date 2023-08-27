@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
 
 interface RegistrationProps {
-  name: "";
+  name: string;
+  email: string;
   namecheck: boolean;
   businessname: string;
   profileImage: File | null;
@@ -21,6 +22,7 @@ const Registration = () => {
   const navigate = useNavigate();
   const [details, setDetails] = useState<RegistrationProps>({
     name: "",
+    email: "",
     namecheck: false,
     businessname: "",
     profileImage: null,
@@ -88,7 +90,7 @@ const Registration = () => {
             },
           });
         }, 3000);
-      } else toast.error(response.statusText);
+      } else toast.error(data.error ? data.error : response.statusText);
     } catch (error: any) {
       console.error(error);
       toast.error(error.statusText);
@@ -106,6 +108,7 @@ const Registration = () => {
         formValues={{
           name: details.name,
           businessname: details.businessname,
+          email: details.email,
         }}
       />
       <PhotoForm
