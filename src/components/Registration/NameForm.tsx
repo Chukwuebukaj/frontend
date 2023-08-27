@@ -68,6 +68,7 @@ const NameForm: React.FC<NameFormProps> = ({
 
           <NextBtn
             $bgColor={validated ? "#3A62F2" : "#D3D3D3"}
+            $cursor={validated ? "" : "not-allowed"}
             disabled={!validated}
             onClick={handleClickNext}
           >
@@ -134,7 +135,7 @@ const CheckBox = styled(InputField)`
   flex-shrink: 0;
 `;
 
-const NextBtn = styled(Button)<{ $bgColor: string }>`
+const NextBtn = styled(Button)<{ $bgColor: string; $cursor: string }>`
   padding: 0.75rem 1rem;
   width: fit-content;
   border-radius: 0.5rem;
@@ -146,4 +147,5 @@ const NextBtn = styled(Button)<{ $bgColor: string }>`
   line-height: normal;
   border: 1px solid ${({ $bgColor }) => $bgColor};
   margin: 3.25rem 0 0 auto;
+  cursor: ${({ $cursor }) => $cursor};
 `;
