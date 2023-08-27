@@ -5,6 +5,9 @@ import { styled } from "styled-components";
 import funImg from "../../assets/havefun.png";
 import Button from "../Reuseables/Button";
 import { formatDate } from "../Date";
+import axios from "axios";
+import { InvoiceDocument, InvoiceStatus, config } from "../Invoice/CardData";
+const baseUrl = import.meta.env.VITE_BASE_URL as string;
 
 interface CountProps {
   total: number;
@@ -32,8 +35,37 @@ const Dashboard: React.FC<DashBoardProps> = ({
   const currentDate = new Date();
   const formattedDateTime = formatDate(currentDate);
 
+  const getUserInvoices = async () => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/invoice/user-invoices`,
+        config
+      );
+      console.log(response);
+      const totalInvoices = response.data.requiredInvoices.length;
+      const pendingInvoices = response.data.requiredInvoices?.filter(
+        (invoice: InvoiceDocument) => invoice.status === InvoiceStatus.PENDING
+      ).length;
+      const clearedInvoices = response.data.requiredInvoices.filter(
+        (invoice: InvoiceDocument) => invoice.status === InvoiceStatus.COMPLETE
+      ).length;
+      const disputedInvoices = response.data.requiredInvoices.filter(
+        (invoice: InvoiceDocument) => invoice.status === InvoiceStatus.DISPUTED
+      ).length;
+      setInvoiceCount({
+        total: totalInvoices,
+        pending: pendingInvoices,
+        cleared: clearedInvoices,
+        disputed: disputedInvoices,
+      });
+    } catch (error) {
+      console.error(error);
+      setInvoiceCount({ total: 0, pending: 0, cleared: 0, disputed: 0 });
+    }
+  };
+
   useEffect(() => {
-    setInvoiceCount({ total: 0, pending: 0, cleared: 0, disputed: 0 });
+    getUserInvoices();
   }, []);
 
   return (

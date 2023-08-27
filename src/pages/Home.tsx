@@ -5,8 +5,10 @@ import { useAccount } from "wagmi";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
 import { UserProps } from "../components/Hero/Hero";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const { address } = useAccount();
   const [btnText, setBtnText] = useState<string>("Get Started");
   const [href, setHref] = useState<string>("/signup");
@@ -33,8 +35,8 @@ const Home = () => {
       console.log(data);
       if (response.ok) {
         toast.success(data.message);
-        setBtnText("Go to Dashboard");
-        setHref("/profile");
+        // setBtnText("Go to Dashboard");
+        // setHref("/profile");
         localStorage.setItem("status", JSON.stringify("loggedin"));
         document.cookie = `pavoce=${data.token}`;
         setLoggedInUserDetails((prevDetails) => ({
@@ -44,11 +46,22 @@ const Home = () => {
           businessLogo: data.user.businessLogo,
           fullName: data.user.fullName,
         }));
+        setTimeout(() => {
+          navigate("/profile", {
+            state: {
+              businessName: data.user.businessName,
+              profilePic: data.user.profilePic,
+              businessLogo: data.user.businessLogo,
+              fullName: data.user.fullName,
+            },
+          });
+        }, 2000);
       } else {
-        setHref("/signup");
+        navigate("/signup");
       }
     } catch (error) {
       console.error(error);
+      navigate("/signup");
     }
   };
 
@@ -60,7 +73,7 @@ const Home = () => {
       setHref("/profile");
       return;
     } else if (!address) {
-      setHref("/");
+      setHref("/profile");
       setBtnText("Get Started");
       localStorage.removeItem("status");
       return;

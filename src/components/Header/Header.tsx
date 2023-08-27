@@ -50,9 +50,9 @@ const Header: React.FC<HeaderProps> = ({
         />
       </svg>
       <div className="avatar-name">
-        <span>{location.state.fullName}</span>
-        <AvatarWrapper $bgImg={location.state.profilePic}>
-          {!location.state.profilePic && "me"}
+        <span>{location.state?.fullName}</span>
+        <AvatarWrapper $bgImg={location.state?.profilePic}>
+          {!location.state?.profilePic && "me"}
         </AvatarWrapper>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({
 export default Header;
 
 const HeaderWrapper = styled.header`
-  padding: 4rem 4rem 0 0;
+  padding: 4rem 4rem 2rem 0;
   width: calc(100vw - 16.375rem);
   height: fit-content;
   display: flex;
@@ -82,10 +82,24 @@ const HeaderWrapper = styled.header`
   gap: 2rem;
   align-items: center;
 
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+
   .avatar-name {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+
+    span {
+      color: var(--black-800, #262626);
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 400;
+      line-height: 2rem; /* 200% */
+    }
   }
 `;
 const CreateInvoiceBtn = styled(Button)`

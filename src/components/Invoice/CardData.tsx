@@ -1,5 +1,9 @@
 import { ReactNode } from "react";
 import { formatDate } from "../Date";
+import { IoClose } from "react-icons/io5";
+import { FiChevronRight } from "react-icons/fi";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+const token = document.cookie.slice(7);
 
 interface InvoiceData {
   icon: ReactNode;
@@ -117,7 +121,7 @@ export const defaultValues: { icon: ReactNode; value: string }[] = [
     value: "Sort",
   },
 ];
-export const inviceIcon: ReactNode = (
+export const invoiceIcon: ReactNode = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="80"
@@ -131,3 +135,171 @@ export const inviceIcon: ReactNode = (
     />
   </svg>
 );
+
+export const createInvoiceNavBar: { title: string; icon: ReactNode }[] = [
+  { title: "Create Invoice", icon: <IoClose /> },
+  { title: "Details", icon: <FiChevronRight /> },
+  { title: "Payment", icon: <FiChevronRight /> },
+  { title: "Terms", icon: <FiChevronRight /> },
+  { title: "Summary", icon: null },
+];
+
+export const fieldTitles: { title: string; id: string; type: string }[] = [
+  { title: "Client Name", id: "client-name", type: "text" },
+  { title: "Client Email", id: "client-email", type: "email" },
+  { title: "Start Date", id: "start-date", type: "date" },
+  { title: "End Date", id: "end-date", type: "date" },
+];
+
+export const addServiceData: {
+  title: string;
+  icon: ReactNode | null;
+  type: string;
+}[] = [
+  { title: "Service Title", icon: null, type: "text" },
+  { title: "Service Description", icon: <AiOutlineInfoCircle />, type: "text" },
+  { title: "Qty", icon: null, type: "number" },
+  { title: "Rate", icon: null, type: "number" },
+];
+
+export const paymentData: { type: string; title: string }[] = [
+  { type: "text", title: "Bank Name" },
+  { type: "number", title: "Account Number" },
+  { type: "number", title: "Installment" },
+  { type: "number", title: "Initial Deposit %" },
+  { type: "number", title: "Tax %" },
+  { type: "number", title: "Discount %" },
+];
+
+export const invoiceTableHeaderData = [
+  "Invoice address",
+  "Customer",
+  "Duration",
+  "Start date",
+  "End date",
+  "Status",
+  "Payment",
+  "Amount",
+];
+
+export const symbol: { currency: string; symbol: string }[] = [
+  {
+    currency: "USD",
+    symbol: "$",
+  },
+  {
+    currency: "EUR",
+    symbol: "€",
+  },
+  {
+    currency: "NGN",
+    symbol: "₦",
+  },
+  {
+    currency: "GBP",
+    symbol: "£",
+  },
+  {
+    currency: "AUD",
+    symbol: "$",
+  },
+  {
+    currency: "JPY",
+    symbol: "¥",
+  },
+];
+
+export interface InvoiceTableProps {
+  "Invoice address": string;
+  Customer: string;
+  Duration: string;
+  "Start date": string;
+  "End date": string;
+  Status: InvoiceStatus;
+  Payment: string;
+  Amount: string;
+}
+
+export interface ServiceDetailsProps {
+  "Service Title": string;
+  "Service Description": string;
+  Qty: number;
+  Rate: number;
+}
+
+export interface InvoiceService {
+  title: string;
+  description: string;
+  quantity: number;
+  rate: number;
+}
+
+export enum InvoiceStatus {
+  APPROVED = "Approved",
+  COMPLETE = "Complete",
+  DISPUTED = "Disputed",
+  PAID = "Paid",
+  PENDING = "Pending",
+}
+
+export interface InvoiceDocument {
+  invoiceAddress: string;
+  clientName: string;
+  clientEmail: string;
+  startDate: string;
+  endDate: string;
+  duration: string;
+  paymentType: string;
+  currency: string;
+  services: InvoiceService[];
+  amount: number;
+  bankName: string;
+  accountNumber: number;
+  installment: number;
+  initialDepositPercentage: string;
+  initialDeposit: number;
+  taxPercentage: string;
+  tax: number;
+  discountPercentage: string;
+  discount: number;
+  termsAndConditions: string[];
+  accepted: boolean;
+  status: InvoiceStatus;
+  createdAt?: string | number | Date;
+  updatedAt?: string | number | Date;
+}
+
+export const convertServiceDetailsToService = (
+  details: ServiceDetailsProps
+): InvoiceService => {
+  return {
+    title: details["Service Title"],
+    description: details["Service Description"],
+    quantity: details.Qty,
+    rate: details.Rate,
+  };
+};
+
+export const config = {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  },
+};
+
+export const changeDateFormat = (date: string) => {
+  const inputDate = new Date(date);
+  const dateFormatter = new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  const formattedDate = dateFormatter.format(inputDate);
+  const [month, day, year] = formattedDate.split(" ");
+  const formattedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+  const finalFormattedDate = `${day} ${formattedMonth} ${year}`;
+  return finalFormattedDate
+    .split("")
+    .filter((item) => item !== ",")
+    .join("");
+};
