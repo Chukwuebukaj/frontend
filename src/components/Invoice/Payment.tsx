@@ -131,6 +131,7 @@ const CtrlBtns = styled.div`
   .grey {
     background: var(--white-400, #d3d3d3);
     border: 1px solid #d3d3d3;
+    cursor: not-allowed;
   }
 `;
 
