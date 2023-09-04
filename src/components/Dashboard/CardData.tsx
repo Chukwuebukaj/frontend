@@ -1,4 +1,6 @@
 import { CardProps } from "./DashboardCard";
+const token = document.cookie.slice(7);
+
 export const cardData: CardProps[] = [
   {
     icon: (
@@ -74,3 +76,10 @@ export const cardData: CardProps[] = [
     bgColor: "#FFF0F0",
   },
 ];
+
+export const config = {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  },
+};

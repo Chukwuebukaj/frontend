@@ -6,8 +6,13 @@ import funImg from "../../assets/havefun.png";
 import Button from "../Reuseables/Button";
 import { formatDate } from "../Date";
 import axios from "axios";
-import { InvoiceDocument, InvoiceStatus, config } from "../Invoice/CardData";
+import {
+  InvoiceDocument,
+  InvoiceStatus,
+  configData,
+} from "../Invoice/CardData";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
+const token = document.cookie.slice(7);
 
 interface CountProps {
   total: number;
@@ -34,12 +39,13 @@ const Dashboard: React.FC<DashBoardProps> = ({
   // Get the current date and time
   const currentDate = new Date();
   const formattedDateTime = formatDate(currentDate);
+  console.log(configData(token));
 
   const getUserInvoices = async () => {
     try {
       const response = await axios.get(
         `${baseUrl}/invoice/user-invoices`,
-        config
+        configData(token)
       );
       console.log(response);
       const totalInvoices = response.data.requiredInvoices.length;

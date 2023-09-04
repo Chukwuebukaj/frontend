@@ -3,7 +3,6 @@ import { formatDate } from "../Date";
 import { IoClose } from "react-icons/io5";
 import { FiChevronRight } from "react-icons/fi";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-const token = document.cookie.slice(7);
 
 interface InvoiceData {
   icon: ReactNode;
@@ -280,11 +279,13 @@ export const convertServiceDetailsToService = (
   };
 };
 
-export const config = {
-  headers: {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  },
+export const configData = (token: string) => {
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  };
 };
 
 export const changeDateFormat = (date: string) => {

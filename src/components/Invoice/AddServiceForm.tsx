@@ -25,6 +25,9 @@ const AddServiceForm: React.FC<AddServiceProps> = ({
   serviceDetails,
   handleSubmitForm,
 }) => {
+  const disabled =
+    Object.values(serviceDetails).includes("") ||
+    Object.values(serviceDetails).includes(0);
   return (
     <ModalFormWrapper onKeyDown={handleSubmitForm}>
       <FormTop>
@@ -66,25 +69,12 @@ const AddServiceForm: React.FC<AddServiceProps> = ({
         )}
       </QtyRate>
       <SaveBtn
-        $bgColor={
-          Object.values(serviceDetails).includes("") ||
-          Object.values(serviceDetails).includes(0)
-            ? "#D3D3D3"
-            : "#3a62f2"
-        }
-        $cursor={
-          Object.values(serviceDetails).includes("") ||
-          Object.values(serviceDetails).includes(0)
-            ? "not-allowed"
-            : ""
-        }
+        $bgColor={disabled ? "#D3D3D3" : "#3a62f2"}
+        $cursor={disabled ? "not-allowed" : ""}
         children="Save"
         type="button"
         onClick={handleAddService}
-        disabled={
-          Object.values(serviceDetails).includes("") ||
-          Object.values(serviceDetails).includes(0)
-        }
+        disabled={disabled}
       />
     </ModalFormWrapper>
   );

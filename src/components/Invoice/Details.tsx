@@ -3,7 +3,7 @@ import Button from "../Reuseables/Button";
 import { fiatTypes, cryptoTypes, fieldTitles } from "./CardData";
 import { ToggleBtns } from "./Invoice.Styled";
 import { styled } from "styled-components";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineClear } from "react-icons/ai";
 import Modal from "./Modal";
 import AddServiceForm from "./AddServiceForm";
 import { PiPencilSimpleLight } from "react-icons/pi";
@@ -44,11 +44,14 @@ export interface DetailsProps {
   handleClickDelete: (index: number) => void;
   updateBtnClicked: boolean;
   deleteBtnClicked: boolean;
+  clearServicesBtnClicked: boolean;
   serviceDetails: ServiceDetailsProps;
   handleDeleteService: () => void;
   handleOpenModal: () => void;
   handleClickNext: () => void;
+  handleClickClearServices: () => void;
   handleSubmitForm: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+  handleDeleteWithEnter: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
 const Details: React.FC<DetailsProps> = ({
@@ -67,12 +70,18 @@ const Details: React.FC<DetailsProps> = ({
   handleClickDelete,
   updateBtnClicked,
   deleteBtnClicked,
+  clearServicesBtnClicked,
   serviceDetails,
   handleDeleteService,
   handleOpenModal,
   handleSubmitForm,
   handleClickNext,
+  handleDeleteWithEnter,
+  handleClickClearServices,
 }) => {
+  const disabled =
+    services.length === 0 || Object.values(clientDetails).includes("");
+
   return (
     <DetailsForm>
       {fieldTitles.map(
@@ -147,10 +156,18 @@ const Details: React.FC<DetailsProps> = ({
             </div>
           ))}
         </div>
-        <AddServiceButton type="button" onClick={handleOpenModal}>
-          <AiOutlinePlus />
-          Add service
-        </AddServiceButton>
+        <div className="add-clear">
+          <AddServiceButton type="button" onClick={handleOpenModal}>
+            <AiOutlinePlus />
+            Add service
+          </AddServiceButton>
+          {services.length > 0 && (
+            <ClearServicesBtn onClick={handleClickClearServices}>
+              Clear services
+              <AiOutlineClear />
+            </ClearServicesBtn>
+          )}
+        </div>
       </Services>
       {clickAddService && (
         <Modal
@@ -179,12 +196,16 @@ const Details: React.FC<DetailsProps> = ({
         />
       )}
 
-      {deleteBtnClicked && (
+      {(deleteBtnClicked || clearServicesBtnClicked) && (
         <Modal
           children={
             <DeletePrompt
               handleDeleteService={handleDeleteService}
               handleCloseModal={handleToggleModal}
+              handleDeleteWithEnter={handleDeleteWithEnter}
+              lastWords={
+                deleteBtnClicked ? "delete this service" : "clear all services"
+              }
             />
           }
         />
@@ -193,14 +214,8 @@ const Details: React.FC<DetailsProps> = ({
         children="Next"
         type="button"
         onClick={handleClickNext}
-        className={
-          services.length === 0 || Object.values(clientDetails).includes("")
-            ? "grey"
-            : "blue"
-        }
-        disabled={
-          services.length === 0 || Object.values(clientDetails).includes("")
-        }
+        className={disabled ? "grey" : "blue"}
+        disabled={disabled}
       />
     </DetailsForm>
   );
@@ -303,6 +318,25 @@ const AddServiceButton = styled(Button)`
   }
 `;
 
+const ClearServicesBtn = styled(Button)`
+  color: var(--blue-500, #3a62f2);
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #fff;
+  gap: 0.5rem;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: crimson;
+  }
+`;
+
 const Services = styled.div`
   display: flex;
   flex-direction: column;
@@ -335,6 +369,12 @@ const Services = styled.div`
 
   .delete-icon {
     color: red;
+  }
+
+  .add-clear {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 `;
 

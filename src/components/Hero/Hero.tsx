@@ -9,6 +9,7 @@ export interface UserProps {
   businessLogo: string;
   fullName: string;
   profilePic: string;
+  email:string
 }
 
 interface HeroProps {

@@ -1,18 +1,35 @@
 import { styled } from "styled-components";
 import Button from "../Reuseables/Button";
+import { useRef, useEffect } from "react";
 
 interface DeletePromptProps {
   handleDeleteService: () => void;
   handleCloseModal: () => void;
+  handleDeleteWithEnter: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+  lastWords: string;
 }
 
 const DeletePrompt: React.FC<DeletePromptProps> = ({
   handleCloseModal,
   handleDeleteService,
+  handleDeleteWithEnter,
+  lastWords,
 }) => {
+  const divRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (divRef.current) {
+      divRef.current.focus();
+    }
+  }, []);
+
   return (
-    <DeletePromptWrapper>
-      <span>Are you sure you want to delete this service?</span>
+    <DeletePromptWrapper
+      onKeyDown={handleDeleteWithEnter}
+      tabIndex={0}
+      ref={divRef}
+    >
+      <span>Are you sure you want to {lastWords}?</span>
       <div className="btns-container">
         <Button type="button" children="Yes" onClick={handleDeleteService} />
         <Button type="button" children="No" onClick={handleCloseModal} />
@@ -46,5 +63,9 @@ const DeletePromptWrapper = styled.div`
       border: 1px solid #3a62f2;
       color: #fff;
     }
+  }
+
+  &:focus {
+    outline: none;
   }
 `;

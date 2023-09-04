@@ -9,7 +9,7 @@ import {
   invoiceTableHeaderData,
   symbol,
   InvoiceTableProps,
-  config,
+  configData,
   InvoiceDocument,
   changeDateFormat,
   InvoiceStatus,
@@ -36,7 +36,10 @@ import { styled } from "styled-components";
 import { Line } from "react-chartjs-2";
 import { options, data } from "./Chart";
 import axios from "axios";
+import Modal from "./Modal";
+import InvoiceTemplate from "./InvoiceTemplate";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
+const token = document.cookie.slice(7);
 
 interface InvoiceProps {
   currentDisplay: string;
@@ -70,6 +73,34 @@ const InvoiceDisplay: React.FC<InvoiceProps> = ({
   }>({ fiat: "$", crypto: "ETH" });
   const [activeBtn, setActiveBtn] = useState<string>("btn1");
   const [tableContent, setTableContent] = useState<InvoiceTableProps[]>([]);
+  const [allInvoices, setAllInvoices] = useState<InvoiceDocument[]>([]);
+  const [invoiceInView, setInvoiceInView] = useState<InvoiceDocument>({
+    invoiceAddress: "",
+    clientName: "",
+    clientEmail: "",
+    startDate: "",
+    endDate: "",
+    duration: "",
+    paymentType: "",
+    currency: "",
+    services: [],
+    amount: 0,
+    bankName: "",
+    accountNumber: 0,
+    installment: 0,
+    initialDepositPercentage: "",
+    initialDeposit: 0,
+    taxPercentage: "",
+    tax: 0,
+    discountPercentage: "",
+    discount: 0,
+    termsAndConditions: [],
+    accepted: false,
+    status: InvoiceStatus.PENDING,
+    createdAt: "",
+    updatedAt: "",
+  });
+  const [showInvoice, setShowInvoice] = useState<boolean>(false);
 
   const handleSelectCurrency = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -87,25 +118,16 @@ const InvoiceDisplay: React.FC<InvoiceProps> = ({
       }));
     }
   };
-  // const data: InvoiceTableProps = {
-  //   "Invoice address": "123 Main St",
-  //   Customer: "John Doe",
-  //   Duration: "3 months",
-  //   "Start date": "2023-01-01",
-  //   "End date": "2023-03-31",
-  //   Status: InvoiceStatus.APPROVED,
-  //   Payment: "Credit Card",
-  //   Amount: "$300",
-  // };
 
   const getUserInvoices = async () => {
     try {
       const response = await axios.get(
         `${baseUrl}/invoice/user-invoices`,
-        config
+        configData(token)
       );
       console.log(response);
       if (response.status === 200) {
+        setAllInvoices(response.data.requiredInvoices);
         const restructuredArray: InvoiceTableProps[] =
           response.data.requiredInvoices.map((data: InvoiceDocument) => ({
             "Invoice address": data.invoiceAddress,
@@ -143,10 +165,24 @@ const InvoiceDisplay: React.FC<InvoiceProps> = ({
       console.error(error);
     }
   };
-  console.log(new Date(Date.now()));
+
+  const handleShowInvoice = (address: string) => {
+    setShowInvoice(true);
+    setInvoiceInView(
+      allInvoices.filter(
+        (invoice: InvoiceDocument) => invoice.invoiceAddress === address
+      )[0]
+    );
+  };
+
+  const currentSymbol = () => {
+    return invoiceInView.paymentType === "Crypto"
+      ? invoiceInView.currency
+      : symbol?.filter((item) => item.currency === invoiceInView.currency)?.[0]
+          ?.symbol;
+  };
 
   useEffect(() => {
-    // setInvoiceCount({ currentMonth: 0, recurring: 0 });
     setWeeklyEarnings({ fiat: 0, crypto: 0 });
     getUserInvoices();
   }, [activeBtn]);
@@ -221,17 +257,6 @@ const InvoiceDisplay: React.FC<InvoiceProps> = ({
                       width={100}
                       height={50}
                     />
-                    {/* <div className="tracker">
-                      <span>$0</span>
-                      <div className="tracker-right">
-                        <div className="line"></div>
-                      </div>
-                    </div>
-                    <div className="days">
-                      {daysOfTheWeek.map((day, index) => (
-                        <span key={index}>{day}</span>
-                      ))}
-                    </div> */}
                   </MeterBottom>
                 </InvoiceMeter>
               </DisplayTop>
@@ -251,13 +276,19 @@ const InvoiceDisplay: React.FC<InvoiceProps> = ({
                   {tableContent.length > 0 ? (
                     <>
                       <TableHead>
-                        <span>Method</span>
+                        <span></span>
                         {invoiceTableHeaderData.map((item, index) => (
                           <span key={index}>{item}</span>
                         ))}
                       </TableHead>
                       {tableContent.map((content, index) => (
-                        <Rows key={index} {...content} />
+                        <Rows
+                          handleShowInvoice={(address) =>
+                            handleShowInvoice(address)
+                          }
+                          key={index}
+                          {...content}
+                        />
                       ))}
                     </>
                   ) : (
@@ -278,6 +309,80 @@ const InvoiceDisplay: React.FC<InvoiceProps> = ({
           {clickCreateInvoice && (
             <CreateInvoiceTemplate
               handleClickListItem={(selected) => handleClickListItem(selected)}
+            />
+          )}
+          {showInvoice && (
+            <Modal
+              children={
+                <InvoiceTemplate
+                  clientName={invoiceInView.clientName}
+                  clientEmail={invoiceInView.clientEmail}
+                  invoiceAddress={invoiceInView.invoiceAddress}
+                  currencyType={invoiceInView.paymentType}
+                  denomination={invoiceInView.currency}
+                  duration={invoiceInView.duration}
+                  services={invoiceInView.services.map((service) => ({
+                    service: {
+                      title: service.title,
+                      description: service.description,
+                    },
+                    quantity: String(service.quantity),
+                    rate:
+                      invoiceInView.paymentType === "Crypto"
+                        ? `${service.rate}${invoiceInView.currency}`
+                        : `${currentSymbol()}${service.rate}`,
+                    amount:
+                      invoiceInView.paymentType === "Crypto"
+                        ? `${Number(service.quantity) * Number(service.rate)}${
+                            invoiceInView.currency
+                          }`
+                        : `${currentSymbol()}${
+                            Number(service.quantity) * Number(service.rate)
+                          }`,
+                  }))}
+                  installments={String(invoiceInView.installment)}
+                  initialDepositpercentage={
+                    invoiceInView.initialDepositPercentage
+                  }
+                  initialDeposit={
+                    invoiceInView.paymentType === "Crypto"
+                      ? `${invoiceInView.initialDeposit}${invoiceInView.currency}`
+                      : `${currentSymbol()}${invoiceInView.initialDeposit}`
+                  }
+                  subtotal={
+                    invoiceInView.paymentType === "Crypto"
+                      ? `${
+                          Number(invoiceInView.amount) +
+                          Number(invoiceInView.discount) -
+                          Number(invoiceInView.tax)
+                        }${invoiceInView.currency}`
+                      : `${currentSymbol()}${
+                          Number(invoiceInView.amount) +
+                          Number(invoiceInView.discount) -
+                          Number(invoiceInView.tax)
+                        }`
+                  }
+                  percentageDiscount={invoiceInView.discountPercentage}
+                  discount={
+                    invoiceInView.paymentType === "Crypto"
+                      ? `${invoiceInView.discount}${invoiceInView.currency}`
+                      : `${currentSymbol()}${invoiceInView.discount}`
+                  }
+                  percentageTax={invoiceInView.taxPercentage}
+                  tax={
+                    invoiceInView.paymentType === "Crypto"
+                      ? `${invoiceInView.tax}${invoiceInView.currency}`
+                      : `${currentSymbol()}${invoiceInView.tax}`
+                  }
+                  total={
+                    invoiceInView.paymentType === "Crypto"
+                      ? `${invoiceInView.amount}${invoiceInView.currency}`
+                      : `${currentSymbol()}${invoiceInView.amount}`
+                  }
+                  clickView={true}
+                  handleCloseModal={() => setShowInvoice(false)}
+                />
+              }
             />
           )}
         </DisplayWrapper>

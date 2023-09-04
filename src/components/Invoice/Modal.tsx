@@ -1,7 +1,11 @@
 import { ReactNode } from "react";
 import { styled } from "styled-components";
 
-const Modal = ({ children }: { children: ReactNode }) => {
+interface ModalProps {
+  children: ReactNode;
+}
+
+const Modal: React.FC<ModalProps> = ({ children }) => {
   return <ModalWrapper>{children}</ModalWrapper>;
 };
 

@@ -5,10 +5,12 @@ import { useAccount } from "wagmi";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
 import { UserProps } from "../components/Hero/Hero";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { deleteCookie } from "../components/Navbar/NavBarData";
 
 const Home = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { address } = useAccount();
   const [btnText, setBtnText] = useState<string>("Get Started");
   const [href, setHref] = useState<string>("/signup");
@@ -17,6 +19,7 @@ const Home = () => {
     businessName: "",
     profilePic: "",
     fullName: "",
+    email: "",
   });
 
   const requestOptions = {
@@ -35,8 +38,6 @@ const Home = () => {
       console.log(data);
       if (response.ok) {
         toast.success(data.message);
-        // setBtnText("Go to Dashboard");
-        // setHref("/profile");
         localStorage.setItem("status", JSON.stringify("loggedin"));
         document.cookie = `pavoce=${data.token}`;
         setLoggedInUserDetails((prevDetails) => ({
@@ -45,6 +46,7 @@ const Home = () => {
           profilePic: data.user.profilePic,
           businessLogo: data.user.businessLogo,
           fullName: data.user.fullName,
+          email: data.user.email,
         }));
         setTimeout(() => {
           navigate("/profile", {
@@ -53,6 +55,7 @@ const Home = () => {
               profilePic: data.user.profilePic,
               businessLogo: data.user.businessLogo,
               fullName: data.user.fullName,
+              email: data.user.email,
             },
           });
         }, 2000);
@@ -71,11 +74,13 @@ const Home = () => {
     if (userStatus && address) {
       setBtnText("Go to Dashboard");
       setHref("/profile");
+      setLoggedInUserDetails(location.state);
       return;
     } else if (!address) {
       setHref("/profile");
       setBtnText("Get Started");
       localStorage.removeItem("status");
+      deleteCookie("pavoce");
       return;
     } else {
       loginUser();
