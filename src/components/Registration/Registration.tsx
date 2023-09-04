@@ -3,9 +3,11 @@ import NameForm from "./NameForm";
 import { useState } from "react";
 import PhotoForm from "./PhotoForm";
 import { useAccount } from "wagmi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { configData } from "../Invoice/CardData";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
+const token = document.cookie.slice(7);
 
 interface RegistrationProps {
   name: string;
@@ -20,11 +22,13 @@ interface RegistrationProps {
 const Registration = () => {
   const { address } = useAccount();
   const navigate = useNavigate();
+  const location = useLocation();
+  const userDetails = location.state;
   const [details, setDetails] = useState<RegistrationProps>({
-    name: "",
-    email: "",
+    name: userDetails.fullName ? userDetails.fullName : "",
+    email: userDetails.email ? userDetails.email : "",
     namecheck: false,
-    businessname: "",
+    businessname: userDetails.businessName ? userDetails.businessName : "",
     profileImage: null,
     businessLogo: null,
     imageCheck: false,
@@ -44,6 +48,21 @@ const Registration = () => {
     }));
   };
 
+  const userUpdateDetails = {
+    fullName: details.name,
+    walletId: String(address),
+    email: details.email,
+    businessName: details.namecheck ? details.name : details.businessname,
+    profilePic: details.profileImage
+      ? details.profileImage
+      : userDetails.profilePic,
+    businessLogo: details.businessLogo
+      ? details.businessLogo
+      : userDetails.businessLogo,
+  };
+
+  console.log(userUpdateDetails);
+
   const submitRegistrationForm = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -51,6 +70,7 @@ const Registration = () => {
     const formData = new FormData();
     formData.append("fullName", details.name);
     formData.append("walletId", String(address));
+    formData.append("email", String(details.email));
     formData.append(
       "businessName",
       details.namecheck ? details.name : details.businessname
@@ -68,12 +88,16 @@ const Registration = () => {
     }
 
     const requestOptions = {
-      method: "POST",
-      body: formData,
+      method: userDetails.fullName ? "PUT" : "POST",
+      headers: userDetails.fullName ? configData(token).headers : {},
+      body: userDetails.fullName ? JSON.stringify(userUpdateDetails) : formData,
     };
 
     try {
-      const response = await fetch(`${baseUrl}/user/register`, requestOptions);
+      const response = await fetch(
+        `${baseUrl}/user/${userDetails.fullName ? "update" : "register"}`,
+        requestOptions
+      );
       const data = await response.json();
       console.log(data);
       console.log(response);
@@ -83,10 +107,14 @@ const Registration = () => {
         setTimeout(() => {
           navigate("/profile", {
             state: {
-              businessName: data.user.businessName,
-              profilePic: data.user.profilePic,
-              businessLogo: data.user.businessLogo,
-              fullName: data.user.fullName,
+              businessName:
+                data[`${data.user ? "user" : "updatedUser"}`].businessName,
+              profilePic:
+                data[`${data.user ? "user" : "updatedUser"}`].profilePic,
+              businessLogo:
+                data[`${data.user ? "user" : "updatedUser"}`].businessLogo,
+              fullName: data[`${data.user ? "user" : "updatedUser"}`].fullName,
+              email: data[`${data.user ? "user" : "updatedUser"}`].email,
             },
           });
         }, 3000);
@@ -117,10 +145,14 @@ const Registration = () => {
         prevClicked={nextClicked}
         handleClickPrev={() => setNextClicked(false)}
         businessLogo={
-          details.businessLogo ? URL.createObjectURL(details.businessLogo) : ""
+          details.businessLogo
+            ? URL.createObjectURL(details.businessLogo)
+            : userDetails.businessLogo
         }
         profileImage={
-          details.profileImage ? URL.createObjectURL(details.profileImage) : ""
+          details.profileImage
+            ? URL.createObjectURL(details.profileImage)
+            : userDetails.profilePic
         }
       />
     </RegistrationWrapper>

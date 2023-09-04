@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-interface TableCardProps {
+export interface TableCardProps {
   title: string;
   description: string;
   quantity: string;
@@ -38,7 +38,7 @@ const CardWrapper = styled.div`
   border-radius: 0.5rem;
   justify-content: space-between;
   width: 100%;
-  align-items: center;
+  align-items: flex-start;
   // border: 1px solid red;
 
   span {
@@ -69,6 +69,8 @@ const CardRight = styled.div`
   justify-content: space-between;
   width: 35%;
   height:100%;
+  // border: 1px solid red;
+
 
 
   span {

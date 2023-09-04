@@ -10,14 +10,17 @@ import {
   InvoiceDocument,
   InvoiceService,
   InvoiceStatus,
-  config,
+  configData,
   convertServiceDetailsToService,
   symbol,
+  fiatTypes,
+  cryptoTypes,
 } from "./CardData";
 import { useAccount } from "wagmi";
 import axios from "axios";
 import { toast } from "react-toastify";
 const baseUrl = import.meta.env.VITE_BASE_URL as string;
+const token = document.cookie.slice(7);
 
 interface TemplateProps {
   handleClickListItem: (selected: string) => void;
@@ -28,12 +31,6 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
 }) => {
   const { address } = useAccount();
   const [currentForm, setCurrentForm] = useState<string>("Details");
-  const [servicedetails, setServicedetails] = useState<ServiceDetailsProps>({
-    "Service Title": "",
-    "Service Description": "",
-    Qty: 0,
-    Rate: 0,
-  });
   const [services, setServices] = useState<ServiceDetailsProps[]>([]);
   const [tableServices, setTableServices] = useState<Service[]>([]);
   const [clickAddService, setClickAddService] = useState<boolean>(false);
@@ -42,6 +39,7 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
   const [denomination, setDenomination] = useState<string>("USD");
   const [clickUpdateBtn, setClickUpdateBtn] = useState<boolean>(false);
   const [clickDeleteBtn, setClickDeleteBtn] = useState<boolean>(false);
+  const [clickClearServices, setClickClearServices] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [terms, setTerms] = useState<string>("");
   const [accepted, setAccepted] = useState<boolean>(false);
@@ -51,6 +49,12 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
     "Start Date": "",
     "End Date": "",
   });
+  const [servicedetails, setServicedetails] = useState<ServiceDetailsProps>({
+    "Service Title": "",
+    "Service Description": "",
+    Qty: 0,
+    Rate: 0,
+  });
   const [paymentDetails, setPaymentDetails] = useState<PaymentInputProps>({
     "Bank Name": "",
     "Account Number": 0,
@@ -59,6 +63,7 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
     "Tax %": 0,
     "Discount %": 0,
   });
+
   const currentSymbol = symbol.find(
     (item) => item.currency === denomination
   )?.symbol;
@@ -84,15 +89,19 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
   const handleBtn1 = () => {
     setActiveBtn("btn1");
     setActiveCurrency("Fiat");
+    setDenomination(fiatTypes[cryptoTypes.indexOf(denomination)]);
   };
+
   const handleBtn2 = () => {
     setActiveBtn("btn2");
     setActiveCurrency("Crypto");
+    setDenomination(cryptoTypes[fiatTypes.indexOf(denomination)]);
   };
 
   const handleServiceInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    event.stopPropagation();
     const { name, value } = event.target;
     setServicedetails((prevDetails) => ({
       ...prevDetails,
@@ -134,9 +143,22 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
     handleCloseModal();
   };
 
+  const handleClearServices = () => {
+    setServices([]);
+    setTableServices([]);
+  };
+
   const handleSubmitForm = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       handleAddService();
+    }
+  };
+
+  const handleDeleteWithEnter = (
+    event: React.KeyboardEvent<HTMLDivElement>
+  ) => {
+    if (event.key === "Enter") {
+      handleDeleteService();
     }
   };
 
@@ -158,6 +180,10 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
   };
 
   const handleDeleteService = () => {
+    if (clickClearServices) {
+      handleClearServices();
+      handleCloseModal();
+    }
     setServices((prevServices) =>
       prevServices?.filter((service) => service !== prevServices[currentIndex])
     );
@@ -173,6 +199,7 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
     setClickAddService(false);
     setClickDeleteBtn(false);
     setClickUpdateBtn(false);
+    setClickClearServices(false);
     setServicedetails({
       "Service Title": "",
       "Service Description": "",
@@ -271,21 +298,22 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
       const response = await axios.post(
         `${baseUrl}/invoice/create`,
         invoiceData,
-        config
+        configData(token)
       );
       if (response.status === 201) {
         console.log("Form Submitted successfully", response);
         toast.success(response.data.message);
-        handleClickListItem("Create Invoice");
+        // handleClickListItem("Create Invoice");
+        location.reload();
       }
     } catch (error: any) {
       console.error(error);
-      // error?.response?.data
-      //   ? toast.error(error?.response?.data)
-      //   : error?.message
-      //   ? toast.error(error?.message)
-      //   : toast.error("An error occurred");
-      handleClickListItem("Create Invoice");
+      error?.response?.data
+        ? toast.error(error?.response?.data)
+        : error?.message
+        ? toast.error(error?.message)
+        : toast.error("An error occurred");
+      // handleClickListItem("Create Invoice");
     }
   };
 
@@ -320,6 +348,9 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
               handleServiceInputChange={handleServiceInputChange}
               handleSubmitForm={handleSubmitForm}
               handleClickNext={() => setCurrentForm("Payment")}
+              handleDeleteWithEnter={handleDeleteWithEnter}
+              handleClickClearServices={() => setClickClearServices(true)}
+              clearServicesBtnClicked={clickClearServices}
             />
           )}
           {currentForm === "Payment" && (
@@ -361,24 +392,24 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
           initialDeposit={
             activeBtn === "btn1" && currentSymbol
               ? currentSymbol + getInitialDeposit()
-              : getInitialDeposit() + denomination
+              : `${getInitialDeposit()} ${denomination}`
           }
           subtotal={`${
             activeBtn === "btn1" && currentSymbol
               ? currentSymbol + getSubTotal()
-              : getSubTotal() + denomination
+              : `${getSubTotal()} ${denomination}`
           }`}
           percentageDiscount={paymentDetails["Discount %"].toString()}
           discount={
             activeBtn === "btn1" && currentSymbol
               ? currentSymbol + getDiscount()
-              : getDiscount() + denomination
+              : `${getDiscount()} ${denomination}`
           }
           percentageTax={paymentDetails["Tax %"].toString()}
           tax={
             activeBtn === "btn1" && currentSymbol
               ? currentSymbol + getTax()
-              : getTax() + denomination
+              : `${getTax()} ${denomination}`
           }
           total={`${
             activeBtn === "btn1" && currentSymbol
@@ -388,12 +419,13 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
                     Number(getDiscount()) +
                     Number(getTax())
                 )
-              : String(
+              : `${
                   Number(getSubTotal()) -
-                    Number(getDiscount()) +
-                    Number(getTax())
-                ) + denomination
+                  Number(getDiscount()) +
+                  Number(getTax())
+                } ${denomination}`
           }`}
+          clickView={false}
         />
       </CreateInvoiceBody>
     </TemplateWrapper>

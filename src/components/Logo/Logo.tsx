@@ -1,10 +1,13 @@
 import { styled } from "styled-components";
 import logo from "../../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Logo = () => {
+  const location = useLocation();
+  console.log(location);
+  
   return (
-    <LogoWrapper to="/">
+    <LogoWrapper to="/" state={location.state}>
       <img src={logo} alt="pavoce logo" />
       <span>Pavoce</span>
     </LogoWrapper>

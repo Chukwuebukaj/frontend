@@ -1,7 +1,11 @@
 import { styled } from "styled-components";
 import { InvoiceStatus, InvoiceTableProps } from "./CardData";
 
-const Rows: React.FC<InvoiceTableProps> = ({
+interface RowProps {
+  handleShowInvoice: (address: string) => void;
+}
+
+const Rows: React.FC<InvoiceTableProps & RowProps> = ({
   "Invoice address": InvoiceAddress,
   Customer,
   Duration,
@@ -10,10 +14,14 @@ const Rows: React.FC<InvoiceTableProps> = ({
   Status,
   Payment,
   Amount,
+  handleShowInvoice,
 }) => {
   return (
     <RowWrapper>
-      <span className="method">
+      <span
+        className="method"
+        onClick={() => handleShowInvoice(InvoiceAddress)}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="13"
@@ -26,9 +34,9 @@ const Rows: React.FC<InvoiceTableProps> = ({
             fill="#3A62F2"
           />
         </svg>
-        Create
+        View
       </span>
-      <span>{InvoiceAddress}</span>
+      <span className="address">{InvoiceAddress}</span>
       <span>{Customer}</span>
       <span>{Duration}</span>
       <span>{StartDate}</span>
@@ -70,7 +78,7 @@ const RowWrapper = styled.div`
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.5rem;
-    height:1.5rem;
+    height: 1.5rem;
     // border: 1px solid red;
     width: 7rem;
     overflow: hidden;
@@ -82,6 +90,11 @@ const RowWrapper = styled.div`
     }
   }
 
+  .address {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .method {
     display: flex;
     justify-content: center;
@@ -89,6 +102,7 @@ const RowWrapper = styled.div`
     gap: 0.25rem;
     flex-shrink: 0;
     background: var(--white-200, #f7f7f7);
+    cursor: pointer;
   }
 
   .approved {

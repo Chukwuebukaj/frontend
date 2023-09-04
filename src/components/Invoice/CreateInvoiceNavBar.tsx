@@ -103,6 +103,7 @@ const NavList = styled.ul`
   }
 
   .close-icon {
+    cursor: pointer;
     svg {
       width: 1.5rem;
       height: 1.5rem;

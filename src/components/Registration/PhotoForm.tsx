@@ -81,12 +81,12 @@ const PhotoForm: React.FC<PhotoFormProps> = ({
               onClick={handleClickPrev}
             />
             <Link to={"/profile"} state={location.state}>
-            <Button
-              className={validated ? "blue" : "grey"}
-              disabled={!validated}
-              children="Continue"
-              type="submit"
-            />
+              <Button
+                className={validated ? "blue" : "grey"}
+                disabled={!validated}
+                children="Continue"
+                type="submit"
+              />
             </Link>
           </BtnsWrapper>
         </PhotoFormWrapper>

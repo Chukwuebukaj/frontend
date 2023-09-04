@@ -4,9 +4,11 @@ import { styled } from "styled-components";
 import logo from "../../assets/react.svg";
 import { useAccount } from "wagmi";
 import ServiceCard from "./ServiceCard";
+import Button from "../Reuseables/Button";
 
-interface LogoProps {
-  $bgImg: string;
+interface StyleProps {
+  $bgImg?: string;
+  $marginLeft?: string | number;
 }
 
 export interface ServiceDetails {
@@ -39,7 +41,12 @@ export interface InvoiceTemplateProps {
   total: string;
 }
 
-const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
+export interface ViewProps {
+  handleCloseModal?: () => void;
+  clickView: boolean;
+}
+
+const InvoiceTemplate: React.FC<InvoiceTemplateProps & ViewProps> = ({
   clientEmail,
   clientName,
   invoiceAddress,
@@ -56,12 +63,14 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
   percentageTax,
   tax,
   total,
+  clickView,
+  handleCloseModal,
 }) => {
   const location = useLocation();
   const { address } = useAccount();
 
   return (
-    <TemplateWrapper>
+    <TemplateWrapper $marginLeft={clickView ? 0 : "auto"}>
       <Top>
         <NameAndEmail>
           <p className="business-name">
@@ -69,6 +78,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
           </p>
           <p className="email">{location.state?.email || "Email goes here"}</p>
         </NameAndEmail>
+        {clickView && <Button children="Close" onClick={handleCloseModal} />}
         <Logo $bgImg={location.state?.businessLogo || logo}></Logo>
       </Top>
       <BillTo>
@@ -84,7 +94,11 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
           <span className="denomination">{denomination}</span>
           <span>
             Duration:{" "}
-            {`${duration ? duration : 0}day${Number(duration) > 1 ? "s" : ""}`}
+            {clickView
+              ? duration
+              : `${duration ? duration : 0}day${
+                  Number(duration) > 1 ? "s" : ""
+                }`}
           </span>
         </BillToRight>
       </BillTo>
@@ -110,18 +124,24 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
       </ServiceTable>
       <InvoiceBottom>
         <BottomLeft>
-          <span>Payment:{installments} Installments</span>
           <span>
-            Initial Deposit {initialDepositpercentage}%: {initialDeposit}
+            Payment: {installments} Installment
+            {Number(installments) > 1 ? "s" : ""}
+          </span>
+          <span>
+            Initial Deposit {initialDepositpercentage}
+            {clickView ? "" : "%"}: {initialDeposit}
           </span>
         </BottomLeft>
         <BottomRight>
           <span>Sub total: {subtotal}</span>
           <span>
-            Discount {percentageDiscount}%: {discount}
+            Discount {percentageDiscount}
+            {clickView ? "" : "%"}: {discount}
           </span>
           <span>
-            Tax {percentageTax}%: {tax}
+            Tax {percentageTax}
+            {clickView ? "" : "%"}: {tax}
           </span>
           <span className="total">Total: {total}</span>
         </BottomRight>
@@ -144,7 +164,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
 
 export default InvoiceTemplate;
 
-const TemplateWrapper = styled.div`
+const TemplateWrapper = styled.div<StyleProps>`
   display: flex;
   width: 35.125rem;
   min-height: 44.1875rem;
@@ -156,7 +176,7 @@ const TemplateWrapper = styled.div`
   border-radius: 0.5rem;
   border: 0.5px solid var(--black-100, #b8b8b8);
   background: var(--white-100, #fff);
-  margin-left: auto;
+  margin-left: ${({ $marginLeft }) => $marginLeft};
 `;
 
 const Top = styled.div`
@@ -164,9 +184,17 @@ const Top = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  button {
+    background: #3a62f2;
+    color: #fff;
+    border: 1px solid #3a62f2;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
 `;
 
-const Logo = styled.div<LogoProps>`
+const Logo = styled.div<StyleProps>`
   background: ${({ $bgImg }) => `url('${$bgImg}') no-repeat center`};
   background-size: 100% 100%;
   width: 2rem;
@@ -215,7 +243,6 @@ const BillToRight = styled.div`
   display: flex;
   flex-direction: column;
   width: 50%;
-  overflow: hidden;
   gap: 0.5rem;
   color: var(--black-800, #262626);
   font-size: 0.875rem;
@@ -227,6 +254,9 @@ const BillToRight = styled.div`
     font-size: 0.75rem;
     font-weight: 700;
     line-height: normal;
+    text-overflow: ellipsis; /* Add ellipsis (...) when content is truncated */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;
   }
 `;
 
