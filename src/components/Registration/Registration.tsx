@@ -48,20 +48,20 @@ const Registration = () => {
     }));
   };
 
-  const userUpdateDetails = {
-    fullName: details.name,
-    walletId: String(address),
-    email: details.email,
-    businessName: details.namecheck ? details.name : details.businessname,
-    profilePic: details.profileImage
-      ? details.profileImage
-      : userDetails.profilePic,
-    businessLogo: details.businessLogo
-      ? details.businessLogo
-      : userDetails.businessLogo,
-  };
+  // const userUpdateDetails = {
+  //   fullName: details.name,
+  //   walletId: String(address),
+  //   email: details.email,
+  //   businessName: details.namecheck ? details.name : details.businessname,
+  //   profilePic: details.profileImage
+  //     ? details.profileImage
+  //     : userDetails.profilePic,
+  //   businessLogo: details.businessLogo
+  //     ? details.businessLogo
+  //     : userDetails.businessLogo,
+  // };
 
-  console.log(details);
+  // console.log(details);
 
   const submitRegistrationForm = async (
     event: React.FormEvent<HTMLFormElement>
