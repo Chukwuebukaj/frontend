@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
-import logo from "../../assets/react.svg";
+import logo from "../../assets/Ellipse 29.png";
 import { useAccount } from "wagmi";
 import ServiceCard from "./ServiceCard";
 import Button from "../Reuseables/Button";

@@ -61,7 +61,7 @@ const Registration = () => {
       : userDetails.businessLogo,
   };
 
-  console.log(userUpdateDetails);
+  console.log(details);
 
   const submitRegistrationForm = async (
     event: React.FormEvent<HTMLFormElement>
@@ -87,10 +87,16 @@ const Registration = () => {
       formData.append("businessLogo", details.businessLogo);
     }
 
+    if (userDetails.fullName && details.profileImage) {
+      formData.append("profilePic", details.profileImage);
+    } else if (userDetails.fullName && details.businessLogo) {
+      formData.append("businessLogo", details.businessLogo);
+    }
+
     const requestOptions = {
       method: userDetails.fullName ? "PUT" : "POST",
-      headers: userDetails.fullName ? configData(token).headers : {},
-      body: userDetails.fullName ? JSON.stringify(userUpdateDetails) : formData,
+      headers: userDetails.fullName ? configData(token, true).headers : {},
+      body: formData,
     };
 
     try {
@@ -108,13 +114,12 @@ const Registration = () => {
           navigate("/profile", {
             state: {
               businessName:
-                data[`${data.user ? "user" : "updatedUser"}`].businessName,
-              profilePic:
-                data[`${data.user ? "user" : "updatedUser"}`].profilePic,
+                data[`${data.user ? "user" : "updated"}`].businessName,
+              profilePic: data[`${data.user ? "user" : "updated"}`].profilePic,
               businessLogo:
-                data[`${data.user ? "user" : "updatedUser"}`].businessLogo,
-              fullName: data[`${data.user ? "user" : "updatedUser"}`].fullName,
-              email: data[`${data.user ? "user" : "updatedUser"}`].email,
+                data[`${data.user ? "user" : "updated"}`].businessLogo,
+              fullName: data[`${data.user ? "user" : "updated"}`].fullName,
+              email: data[`${data.user ? "user" : "updated"}`].email,
             },
           });
         }, 3000);

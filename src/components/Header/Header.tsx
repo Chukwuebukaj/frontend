@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import Button from "../Reuseables/Button";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import defaultLogo from "../../assets/Ellipse 2.png";
 
 interface HeaderProps {
   currentDisplay: string;
@@ -58,9 +59,9 @@ const Header: React.FC<HeaderProps> = ({
       </svg>
       <div className="avatar-name">
         <span>{location.state?.fullName}</span>
-        <AvatarWrapper $bgImg={location.state?.profilePic}>
-          {!location.state?.profilePic && "me"}
-        </AvatarWrapper>
+        <AvatarWrapper
+          $bgImg={location.state?.profilePic || defaultLogo}
+        ></AvatarWrapper>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"

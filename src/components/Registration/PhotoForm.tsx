@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { InputField } from "../Reuseables/FormFields";
 import Button from "../Reuseables/Button";
-import { Link, useLocation } from "react-router-dom";
+// import { Link, useLocation } from "react-router-dom";
 
 interface PhotoFormProps {
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -24,7 +24,7 @@ const PhotoForm: React.FC<PhotoFormProps> = ({
   businessLogo,
   profileImage,
 }) => {
-  const location = useLocation();
+  // const location = useLocation();
   const validated: boolean =
     (isChecked && profileImage !== "") ||
     (!isChecked && profileImage !== "" && businessLogo !== "");
@@ -80,14 +80,14 @@ const PhotoForm: React.FC<PhotoFormProps> = ({
               children="Prev"
               onClick={handleClickPrev}
             />
-            <Link to={"/profile"} state={location.state}>
+            {/* <Link to={"/profile"} state={location.state}> */}
               <Button
                 className={validated ? "blue" : "grey"}
                 disabled={!validated}
                 children="Continue"
                 type="submit"
               />
-            </Link>
+            {/* </Link> */}
           </BtnsWrapper>
         </PhotoFormWrapper>
       )}
