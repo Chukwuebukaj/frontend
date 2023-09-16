@@ -279,12 +279,16 @@ export const convertServiceDetailsToService = (
   };
 };
 
-export const configData = (token: string) => {
+export const configData = (token: string, update?: boolean) => {
   return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
+    headers: update
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
   };
 };
 

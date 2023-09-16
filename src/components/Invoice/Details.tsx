@@ -161,8 +161,8 @@ const Details: React.FC<DetailsProps> = ({
             <AiOutlinePlus />
             Add service
           </AddServiceButton>
-          {services.length > 0 && (
-            <ClearServicesBtn onClick={handleClickClearServices}>
+          {services.length > 1 && (
+            <ClearServicesBtn type="button" onClick={handleClickClearServices}>
               Clear services
               <AiOutlineClear />
             </ClearServicesBtn>
