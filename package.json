@@ -13,6 +13,7 @@
     "@web3modal/ethereum": "^2.7.1",
     "@web3modal/react": "^2.7.1",
     "axios": "^1.4.0",
+    "babel-plugin-styled-components": "^2.1.4",
     "chart.js": "^4.4.0",
     "faker": "^5.5.3",
     "icons": "^1.0.0",
