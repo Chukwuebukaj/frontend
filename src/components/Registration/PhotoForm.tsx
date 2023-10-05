@@ -26,8 +26,14 @@ const PhotoForm: React.FC<PhotoFormProps> = ({
 }) => {
   // const location = useLocation();
   const validated: boolean =
-    (isChecked && profileImage !== "") ||
-    (!isChecked && profileImage !== "" && businessLogo !== "");
+    (isChecked &&
+      profileImage !== "" &&
+      String(profileImage) !== "undefined") ||
+    (!isChecked &&
+      profileImage !== "" &&
+      String(profileImage) !== "undefined" &&
+      businessLogo !== "" &&
+      String(businessLogo) !== "undefined");
 
   return (
     <>
@@ -81,12 +87,12 @@ const PhotoForm: React.FC<PhotoFormProps> = ({
               onClick={handleClickPrev}
             />
             {/* <Link to={"/profile"} state={location.state}> */}
-              <Button
-                className={validated ? "blue" : "grey"}
-                disabled={!validated}
-                children="Continue"
-                type="submit"
-              />
+            <Button
+              className={validated ? "blue" : "grey"}
+              disabled={!validated}
+              children="Continue"
+              type="submit"
+            />
             {/* </Link> */}
           </BtnsWrapper>
         </PhotoFormWrapper>

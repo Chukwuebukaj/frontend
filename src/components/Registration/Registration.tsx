@@ -25,10 +25,10 @@ const Registration = () => {
   const location = useLocation();
   const userDetails = location.state;
   const [details, setDetails] = useState<RegistrationProps>({
-    name: userDetails.fullName ? userDetails.fullName : "",
-    email: userDetails.email ? userDetails.email : "",
+    name: userDetails?.fullName ? userDetails?.fullName : "",
+    email: userDetails?.email ? userDetails?.email : "",
     namecheck: false,
-    businessname: userDetails.businessName ? userDetails.businessName : "",
+    businessname: userDetails?.businessName ? userDetails?.businessName : "",
     profileImage: null,
     businessLogo: null,
     imageCheck: false,
@@ -87,21 +87,21 @@ const Registration = () => {
       formData.append("businessLogo", details.businessLogo);
     }
 
-    if (userDetails.fullName && details.profileImage) {
+    if (userDetails?.fullName && details.profileImage) {
       formData.append("profilePic", details.profileImage);
-    } else if (userDetails.fullName && details.businessLogo) {
+    } else if (userDetails?.fullName && details.businessLogo) {
       formData.append("businessLogo", details.businessLogo);
     }
 
     const requestOptions = {
-      method: userDetails.fullName ? "PUT" : "POST",
-      headers: userDetails.fullName ? configData(token, true).headers : {},
+      method: userDetails?.fullName ? "PUT" : "POST",
+      headers: userDetails?.fullName ? configData(token, true).headers : {},
       body: formData,
     };
 
     try {
       const response = await fetch(
-        `${baseUrl}/user/${userDetails.fullName ? "update" : "register"}`,
+        `${baseUrl}/user/${userDetails?.fullName ? "update" : "register"}`,
         requestOptions
       );
       const data = await response.json();
@@ -152,12 +152,12 @@ const Registration = () => {
         businessLogo={
           details.businessLogo
             ? URL.createObjectURL(details.businessLogo)
-            : userDetails.businessLogo
+            : userDetails?.businessLogo
         }
         profileImage={
           details.profileImage
             ? URL.createObjectURL(details.profileImage)
-            : userDetails.profilePic
+            : userDetails?.profilePic
         }
       />
     </RegistrationWrapper>
