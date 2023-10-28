@@ -33,9 +33,7 @@ const Home = () => {
   const loginUser = async () => {
     try {
       const response = await fetch(`${baseUrl}/user/login`, requestOptions);
-      console.log(response);
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
         toast.success(data.message);
         localStorage.setItem("status", JSON.stringify("loggedin"));
@@ -49,6 +47,7 @@ const Home = () => {
           email: data.user.email,
         }));
         setTimeout(() => {
+          window.location.href = "/profile";
           navigate("/profile", {
             state: {
               businessName: data.user.businessName,

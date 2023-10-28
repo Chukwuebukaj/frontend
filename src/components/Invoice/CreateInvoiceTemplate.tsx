@@ -288,8 +288,6 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
     accepted: accepted,
   };
 
-  console.log(invoiceData);
-
   const handleSubmitInvoice = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -301,7 +299,6 @@ const CreateInvoiceTemplate: React.FC<TemplateProps> = ({
         configData(token)
       );
       if (response.status === 201) {
-        console.log("Form Submitted successfully", response);
         toast.success(response.data.message);
         // handleClickListItem("Create Invoice");
         location.reload();

@@ -105,8 +105,6 @@ const Registration = () => {
         requestOptions
       );
       const data = await response.json();
-      console.log(data);
-      console.log(response);
       if (response.ok) {
         toast.success(data.message);
         document.cookie = `pavoce=${data.token}`;
