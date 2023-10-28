@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 
 const Logo = () => {
   const location = useLocation();
-  console.log(location);
   
   return (
     <LogoWrapper to="/" state={location.state}>

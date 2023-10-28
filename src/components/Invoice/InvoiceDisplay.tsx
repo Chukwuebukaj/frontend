@@ -125,7 +125,6 @@ const InvoiceDisplay: React.FC<InvoiceProps> = ({
         `${baseUrl}/invoice/user-invoices`,
         configData(token)
       );
-      console.log(response);
       if (response.status === 200) {
         setAllInvoices(response.data.requiredInvoices);
         const restructuredArray: InvoiceTableProps[] =
@@ -183,8 +182,8 @@ const InvoiceDisplay: React.FC<InvoiceProps> = ({
   };
 
   useEffect(() => {
-    setWeeklyEarnings({ fiat: 0, crypto: 0 });
     getUserInvoices();
+    setWeeklyEarnings({ fiat: 0, crypto: 0 });
   }, [activeBtn]);
   return (
     <>
